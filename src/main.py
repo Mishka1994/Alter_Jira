@@ -1,17 +1,17 @@
 from typing import Union
 from fastapi import FastAPI
+from config.settings import AppSettings
+from src.api.task import person_router
+from src.config.db import Base
 
-app = FastAPI()
+app = FastAPI(**AppSettings().model_dump())
 
+app.include_router(person_router)
 
-@app.get('/')
-def read_root():
-    return {'Hello': 'World'}
-
-
-@app.get('items/{item_id}')
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {'item_id': item_id, 'q': q}
-
-
+@app.on_event('startup')
+async def startup_event():
+    from src.config.db import engine
+    from src.model.task import Task # noqa
+    from src.model.person import Person # noqa
+    Base.metadata.create_all(bind=engine)
 
