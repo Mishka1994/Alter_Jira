@@ -1,7 +1,8 @@
 from typing import Union
 from fastapi import FastAPI
 from config.settings import AppSettings
-from src.api.task import person_router
+from src.api.person import person_router
+
 from src.config.db import Base
 
 app = FastAPI(**AppSettings().model_dump())
